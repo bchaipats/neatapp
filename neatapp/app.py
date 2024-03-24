@@ -110,4 +110,5 @@ with upload_tab:
 with all_data_tab:
     # Show all data in the database (for verification purpose)
     st.subheader("All Saved Data")
-    st.dataframe(st.session_state["all_data"])
+    st.markdown("Double click in a cell to see the entire value.")
+    st.dataframe(st.session_state["all_data"], use_container_width=True)
