@@ -47,6 +47,7 @@ with upload_tab:
     if show_image and uploaded_file:
         st.image(image)
 
+    # Extract data
     if st.button("Extract Information"):
         if not uploaded_file:
             st.warning("Please upload a PDF/PNG file.")
@@ -74,6 +75,7 @@ with upload_tab:
             st.session_state["data"].update(response)
 
     if "data" in st.session_state and st.session_state["data"]:
+        # Edit result
         edit_data = st.toggle("Edit data")
         if edit_data:
             st.markdown("Double click in a cell of the value column to edit the data.")
@@ -83,7 +85,7 @@ with upload_tab:
             st.markdown("Extracted data")
             st.json(st.session_state["data"])
 
-        # Save result
+        # Confirm and save result
         confirm = st.checkbox("Confirm the result is correct.")
         if confirm:
             if st.button("Insert data?"):
@@ -106,5 +108,6 @@ with upload_tab:
                 st.rerun()
 
 with all_data_tab:
+    # Show all data in the database (for verification purpose)
     st.subheader("All Saved Data")
     st.dataframe(st.session_state["all_data"])
