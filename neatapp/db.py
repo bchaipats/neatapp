@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 
@@ -15,10 +16,11 @@ def store_result(payload: json, image_path: str) -> None:
     with psycopg.connect(os.getenv("DB_CONNECTION_STRING")) as conn:
         with conn.cursor() as cur:
             cur.execute(
-                "INSERT INTO neatapp (payload, image_path) VALUES (%s, %s)",
+                "INSERT INTO neatapp (payload, image_path, created_timestamp) VALUES (%s, %s, %s)",
                 (
                     payload,
                     image_path,
+                    datetime.datetime.now(),
                 ),
             )
 
@@ -30,5 +32,5 @@ def load_data_as_dataframe() -> pd.DataFrame:
         pd.DataFrame: a pandas DataFrame contains all of the loaded data.
     """
     with psycopg.connect(os.getenv("DB_CONNECTION_STRING")) as conn:
-        df = pd.read_sql_query("SELECT id, payload, image_path FROM neatapp", conn)
+        df = pd.read_sql_query("SELECT created_timestamp, image_path, payload FROM neatapp", conn)
     return df
