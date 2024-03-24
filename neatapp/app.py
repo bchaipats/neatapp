@@ -4,6 +4,7 @@ import time
 
 import streamlit as st
 from llama_index.core import SimpleDirectoryReader
+from pdf2image import convert_from_bytes
 from PIL import Image
 
 from neatapp.constants import DATA_EXTRACT_STR
@@ -31,11 +32,16 @@ with upload_tab:
     st.subheader("Extract Information")
     st.markdown("Upload an image/screenshot/pdf of a restaurant advertising media.")
     uploaded_file = st.file_uploader(
-        "Upload an image/screenshot of a document:", type=["png", "jpg", "jpeg"]
+        "Upload an image/screenshot (PNG, JPG, JPEG) or PDF of a document:",
+        type=["png", "jpg", "jpeg", "pdf"],
     )
 
     if uploaded_file:
-        image = Image.open(uploaded_file).convert("RGB")
+        if uploaded_file.type == "application/pdf":
+            # Convert a pdf to image and only use the first page.
+            image = convert_from_bytes(uploaded_file.read())[0]
+        else:
+            image = Image.open(uploaded_file).convert("RGB")
 
     show_image = st.toggle("Show uploaded image")
     if show_image and uploaded_file:

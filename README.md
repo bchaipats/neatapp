@@ -6,6 +6,20 @@
 
 ## Setup
 
+### Mac
+We'll be using [`pdf2image`](https://github.com/Belval/pdf2image) library to convert a PDF into image so that we can reuse the same data extraction process for both PDF and image.
+
+To use `pdf2image`, Mac users will have to install poppler.
+
+Installing using Brew:
+```bash
+brew install poppler
+```
+
+### Windows & Linux
+
+For Windows & Linux users, please check out the installation instruction of poppler from the [pdf2image GitHub repository](https://github.com/Belval/pdf2image?tab=readme-ov-file#how-to-install)
+
 ### API keys
 
 We'll need OpenAI to access GPT-4V multimodal LLM `(gpt-4-vision-preview)`. Make sure to create an OpenAI account and generate an API key.
