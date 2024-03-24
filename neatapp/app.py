@@ -29,7 +29,7 @@ with setup_tab:
 with upload_tab:
 
     st.subheader("Extract Information")
-    st.markdown("Either upload an image/screenshot of a document, or enter the text manually.")
+    st.markdown("Upload an image/screenshot/pdf of a restaurant advertising media.")
     uploaded_file = st.file_uploader(
         "Upload an image/screenshot of a document:", type=["png", "jpg", "jpeg"]
     )
