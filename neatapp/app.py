@@ -59,25 +59,34 @@ with upload_tab:
             with st.spinner("Extracting..."):
                 image.save("temp.png")
                 image_documents = SimpleDirectoryReader(input_files=["temp.png"]).load_data()
-                response = extract_data(
-                    image_documents,
-                    data_extract_str,
-                    llm_name,
-                    model_temperature,
-                    api_key,
-                )
-                os.remove("temp.png")
+                try:
+                    response = extract_data(
+                        image_documents,
+                        data_extract_str,
+                        llm_name,
+                        model_temperature,
+                        api_key,
+                    )
+                except Exception as e:
+                    raise e
+                finally:
+                    os.remove("temp.png")
             st.session_state["data"].update(response)
 
     if "data" in st.session_state and st.session_state["data"]:
-        st.markdown("Extracted data")
-        st.json(st.session_state["data"])
+        edit_data = st.toggle("Edit data")
+        if edit_data:
+            st.markdown("Double click in a cell of the value column to edit the data.")
+            updated_data = st.data_editor(st.session_state["data"])
+            st.session_state["data"] = updated_data
+        else:
+            st.markdown("Extracted data")
+            st.json(st.session_state["data"])
 
+        # Save result
         confirm = st.checkbox("Confirm the result is correct.")
-        if st.button("Insert data?"):
-            if not confirm:
-                st.info("Please confirm that the result is correct before inserting.")
-            else:
+        if confirm:
+            if st.button("Insert data?"):
                 with st.spinner("Inserting data..."):
                     save_path = generate_unique_path(uploaded_file.name)
                     save_path.parent.mkdir(parents=True, exist_ok=True)
