@@ -1,7 +1,11 @@
+import os
+
 import streamlit as st
+from llama_index.core import SimpleDirectoryReader
 from PIL import Image
 
 from neatapp.constants import DATA_EXTRACT_STR
+from neatapp.data import extract_data
 
 st.title("Image/PDF Data Extractor")
 st.markdown(("This demo allows you to upload your image/pdf and extract data from it."))
@@ -25,3 +29,33 @@ with upload_tab:
     show_image = st.toggle("Show uploaded image")
     if show_image and uploaded_file:
         st.image(Image.open(uploaded_file).convert("RGB"))
+
+    if st.button("Extract Information"):
+        if not uploaded_file:
+            st.warning("Please upload a PDF/PNG file.")
+        elif not api_key:
+            st.warning(
+                "You must insert an OpenAI API key in the Setup tab before extracting information."
+            )
+        else:
+            st.session_state["data"] = {}
+            data = {}
+            with st.spinner("Extracting..."):
+                if uploaded_file:
+                    Image.open(uploaded_file).convert("RGB").save("temp.png")
+                    image_documents = SimpleDirectoryReader(input_files=["temp.png"]).load_data()
+                    response = extract_data(
+                        image_documents,
+                        data_extract_str,
+                        llm_name,
+                        model_temperature,
+                        api_key,
+                    )
+                    data.update(response)
+                    os.remove("temp.png")
+            st.session_state["data"].update(data)
+            st.session_state["filename"] = uploaded_file.name
+
+    if "data" in st.session_state and st.session_state["data"]:
+        st.markdown("Extracted data")
+        st.json(st.session_state["data"])
