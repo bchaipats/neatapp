@@ -101,3 +101,5 @@ site/
 
 # Mocked blob storage for saving images
 mocked_storage/
+*.mov
+*.mp4
