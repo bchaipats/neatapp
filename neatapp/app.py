@@ -73,24 +73,28 @@ with upload_tab:
         st.markdown("Extracted data")
         st.json(st.session_state["data"])
 
+        confirm = st.checkbox("Confirm the result is correct.")
         if st.button("Insert data?"):
-            with st.spinner("Inserting data..."):
-                save_path = generate_unique_path(uploaded_file.name)
-                save_path.parent.mkdir(parents=True, exist_ok=True)
-                image.save(save_path)
-                payload = json.dumps(st.session_state["data"], indent=4)
-                store_result(payload, save_path.as_posix())
+            if not confirm:
+                st.info("Please confirm that the result is correct before inserting.")
+            else:
+                with st.spinner("Inserting data..."):
+                    save_path = generate_unique_path(uploaded_file.name)
+                    save_path.parent.mkdir(parents=True, exist_ok=True)
+                    image.save(save_path)
+                    payload = json.dumps(st.session_state["data"], indent=4)
+                    store_result(payload, save_path.as_posix())
 
-            st.session_state["all_data"] = load_data_as_dataframe()
-            st.session_state["data"] = {}
+                st.session_state["all_data"] = load_data_as_dataframe()
+                st.session_state["data"] = {}
 
-            # Notify user that he has successfully inserted the data.
-            container = st.empty()
-            container.success("Successfully inserted data to the database.")
-            time.sleep(1)
-            container.empty()
+                # Notify user that he has successfully inserted the data.
+                container = st.empty()
+                container.success("Successfully inserted data to the database.")
+                time.sleep(1)
+                container.empty()
 
-            st.rerun()
+                st.rerun()
 
 with all_data_tab:
     st.subheader("All Saved Data")
