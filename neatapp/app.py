@@ -6,11 +6,15 @@ from PIL import Image
 
 from neatapp.constants import DATA_EXTRACT_STR
 from neatapp.data import extract_data
+from neatapp.db import load_data_as_dataframe
+
+if "all_data" not in st.session_state:
+    st.session_state["all_data"] = load_data_as_dataframe()
 
 st.title("Image/PDF Data Extractor")
 st.markdown(("This demo allows you to upload your image/pdf and extract data from it."))
 
-setup_tab, upload_tab = st.tabs(["Setup", "Upload/Extract Data"])
+setup_tab, upload_tab, all_data_tab = st.tabs(["Setup", "Upload/Extract Data", "All Saved Data"])
 
 with setup_tab:
     st.subheader("LLM Setup")
@@ -59,3 +63,7 @@ with upload_tab:
     if "data" in st.session_state and st.session_state["data"]:
         st.markdown("Extracted data")
         st.json(st.session_state["data"])
+
+with all_data_tab:
+    st.subheader("All Saved Data")
+    st.dataframe(st.session_state["all_data"])
