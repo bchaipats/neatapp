@@ -1,4 +1,8 @@
-# neatapp
+# Neatapp
+Image/PDF Data Extractor using Multimodal LLM from OpenAI + LlamaIndex.
+
+This app allows you to upload your image/pdf, extract data from it, and save the result into a database.
+
 
 ## Prerequisite
 
@@ -59,7 +63,16 @@ We'll be using PostgreSQL database to store extracted json payloads and image pa
 ```
 
 ### Run Streamlit app
-Now we're ready to test the app!
+Now we're ready to test the app. Run the following command, and your app will be available at http://localhost:8501.
 ```bash
 streamlit run neatapp/app.py
 ```
+
+### Test the app
+To test the app, try using example image and pdf files provided in the `data/restaurant_images` and `data/restaurant_pdf` directories, respectively.
+
+You can also upload your own images or pdf files. Make sure that they have content related to food promotion or advertisement!
+
+### Limitation
+- The app currently supports processing one image or pdf at a time.
+- In case of PDF, the program will only process the first page of the PDF and ignore the rest.
