@@ -3,6 +3,8 @@ Image/PDF Data Extractor using Multimodal LLM from OpenAI + LlamaIndex.
 
 This app allows you to upload your image/pdf, extract data from it, and save the result into a database.
 
+## Demo
+https://github.com/bchaipats/neatapp/assets/108991346/16150a0a-6852-4026-b954-610e3cde6f32
 
 ## Prerequisite
 
