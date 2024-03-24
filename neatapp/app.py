@@ -1,4 +1,6 @@
+import json
 import os
+import time
 
 import streamlit as st
 from llama_index.core import SimpleDirectoryReader
@@ -6,7 +8,8 @@ from PIL import Image
 
 from neatapp.constants import DATA_EXTRACT_STR
 from neatapp.data import extract_data
-from neatapp.db import load_data_as_dataframe
+from neatapp.db import load_data_as_dataframe, store_result
+from neatapp.utils import generate_unique_path
 
 if "all_data" not in st.session_state:
     st.session_state["all_data"] = load_data_as_dataframe()
@@ -24,15 +27,19 @@ with setup_tab:
     data_extract_str = st.text_area("The query to extract data with.", value=DATA_EXTRACT_STR)
 
 with upload_tab:
+
     st.subheader("Extract Information")
     st.markdown("Either upload an image/screenshot of a document, or enter the text manually.")
     uploaded_file = st.file_uploader(
         "Upload an image/screenshot of a document:", type=["png", "jpg", "jpeg"]
     )
 
+    if uploaded_file:
+        image = Image.open(uploaded_file).convert("RGB")
+
     show_image = st.toggle("Show uploaded image")
     if show_image and uploaded_file:
-        st.image(Image.open(uploaded_file).convert("RGB"))
+        st.image(image)
 
     if st.button("Extract Information"):
         if not uploaded_file:
@@ -43,26 +50,41 @@ with upload_tab:
             )
         else:
             st.session_state["data"] = {}
-            data = {}
             with st.spinner("Extracting..."):
-                if uploaded_file:
-                    Image.open(uploaded_file).convert("RGB").save("temp.png")
-                    image_documents = SimpleDirectoryReader(input_files=["temp.png"]).load_data()
-                    response = extract_data(
-                        image_documents,
-                        data_extract_str,
-                        llm_name,
-                        model_temperature,
-                        api_key,
-                    )
-                    data.update(response)
-                    os.remove("temp.png")
-            st.session_state["data"].update(data)
-            st.session_state["filename"] = uploaded_file.name
+                image.save("temp.png")
+                image_documents = SimpleDirectoryReader(input_files=["temp.png"]).load_data()
+                response = extract_data(
+                    image_documents,
+                    data_extract_str,
+                    llm_name,
+                    model_temperature,
+                    api_key,
+                )
+                os.remove("temp.png")
+            st.session_state["data"].update(response)
 
     if "data" in st.session_state and st.session_state["data"]:
         st.markdown("Extracted data")
         st.json(st.session_state["data"])
+
+        if st.button("Insert data?"):
+            with st.spinner("Inserting data..."):
+                save_path = generate_unique_path(uploaded_file.name)
+                save_path.parent.mkdir(parents=True, exist_ok=True)
+                image.save(save_path)
+                payload = json.dumps(st.session_state["data"], indent=4)
+                store_result(payload, save_path.as_posix())
+
+            st.session_state["all_data"] = load_data_as_dataframe()
+            st.session_state["data"] = {}
+
+            # Notify user that he has successfully inserted the data.
+            container = st.empty()
+            container.success("Successfully inserted data to the database.")
+            time.sleep(1)
+            container.empty()
+
+            st.rerun()
 
 with all_data_tab:
     st.subheader("All Saved Data")

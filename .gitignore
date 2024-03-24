@@ -98,3 +98,6 @@ site/
 
 # Clean up
 .trash/
+
+# Mocked blob storage for saving images
+mocked_storage/
