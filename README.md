@@ -75,6 +75,8 @@ To test the app, try using example image and pdf files provided in the `data/res
 
 You can also upload your own images or pdf files. Make sure that they have content related to food promotion or advertisement!
 
+Enjoy!.
+
 ### Limitation
 - The app currently supports processing one image or pdf at a time.
 - In case of PDF, the program will only process the first page of the PDF and ignore the rest.
