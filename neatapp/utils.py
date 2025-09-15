@@ -14,29 +14,20 @@ def get_multi_modal_llm(
     Args:
         llm_name (str): name of the OpenAI GPT model
         model_temperature (int): model temperature ranging from 0-1
-        openai_api_key (str): an OPENAI_API_KEY used to authenticate with the OpenAI platform
-        max_new_tokens (int, optional): number of maximum tokens generated. Defaults to 1000.
+        openai_api_key (str): an OPENAI API key
+        max_new_tokens (int, optional): maximum new tokens to generate. Defaults to 1000.
 
     Returns:
-        OpenAIMultiModal: _description_
+        OpenAIMultiModal: OpenAIMultiModal instance
     """
-    llm = OpenAIMultiModal(
-        model=llm_name,
-        temperature=model_temperature,
-        api_key=openai_api_key,
+    return OpenAIMultiModal(
+        llm_name=llm_name,
+        model_temperature=model_temperature,
+        openai_api_key=openai_api_key,
         max_new_tokens=max_new_tokens,
     )
-    return llm
 
 
-def generate_unique_path(file_name: str) -> Path:
-    """Given the file name, generate a unique file path.
-
-    Args:
-        file_name (str): name of the file.
-
-    Returns:
-        Path: a unique PosixPath object.
-    """
-    file_path = Path(STORAGE_DIR, str(uuid.uuid4()), file_name)
-    return file_path
+def hello_world():
+    """Prints hello world"""
+    print("hello_world")
