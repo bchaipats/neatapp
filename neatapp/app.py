@@ -15,7 +15,7 @@ from neatapp.utils import generate_unique_path
 if "all_data" not in st.session_state:
     st.session_state["all_data"] = load_data_as_dataframe()
 
-st.title("Image/PDF Data Extractor")
+st.title("AI Image/PDF Data Extractor")
 st.markdown(("This demo allows you to upload your image/pdf and extract data from it."))
 
 setup_tab, upload_tab, all_data_tab = st.tabs(["Setup", "Upload/Extract Data", "All Saved Data"])
